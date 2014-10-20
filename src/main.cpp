@@ -3,6 +3,9 @@
 #include <iostream>
 #include <fstream>
 #include <vector>
+#include <glm/glm.hpp>
+#include <glm/gtc/matrix_transform.hpp>
+#include <glm/gtc/type_ptr.hpp>
 #include "io/window.h"
 #include "io/keyboard.h"
 
@@ -118,19 +121,40 @@ int main()
     glGenVertexArrays(1, &vao);
     glBindVertexArray(vao);
 
-    GLfloat vertices_position[8] =
+    GLfloat vertices_position[24] =
     {
-        -0.5, -0.5,
-        0.5, -0.5,
-        0.5, 0.5,
-        -0.5, 0.5,
+        -1.0f, -1.0f, 1.0f,
+        1.0f, -1.0f, 1.0f,
+        1.0f, 1.0f, 1.0f,
+        -1.0f, 1.0f, 1.0f,
+        -1.0f, -1.0f, -1.0f,
+        1.0f, -1.0f, -1.0f,
+        1.0f, 1.0f, -1.0f,
+        -1.0f, 1.0f, -1.0f
     };
 
-    GLuint indices[6] =
+    GLuint indices[36] =
     {
-        0, 1, 2,
-        2, 3, 0
+        0, 1, 2, 2, 3, 0,
+        3, 2, 6, 6, 7, 3,
+        7, 6, 5, 5, 4, 7,
+        4, 0, 3, 3, 7, 4,
+        0, 1, 5, 5, 4, 0,
+        1, 5, 6, 6, 2, 1
     };
+
+    glm::mat4 Projection;
+    // Set the projection matrix
+    Projection = glm::perspective(90.f, 500.f / 500.f, 0.1f, 1000.f);
+
+    glm::mat4 View = glm::lookAt(glm::vec3(0, 0, -2.5f), // Camera is at (4,3,3), in World Space
+                                 glm::vec3(0, 0, 0), // and looks at the origin
+                                 glm::vec3(0, 1, 0)  // Head is up (set to 0,-1,0 to look upside-down)
+                                 );
+
+    glm::mat4 Model = glm::mat4(1.0f);
+
+    glm::mat4 MVP = Projection * View * Model;
 
     GLuint vbo;
     glGenBuffers(1, &vbo);
@@ -150,16 +174,21 @@ int main()
     // Get the location of the attributes that enters in the vertex shader
     GLint position_attribute = glGetAttribLocation(shaderProgram, "position");
     // Specify how the data for position can be accessed
-    glVertexAttribPointer(position_attribute, 2, GL_FLOAT, GL_FALSE, 0, 0);
+    glVertexAttribPointer(position_attribute, 3, GL_FLOAT, GL_FALSE, 0, 0);
     // Enable the attribute
     glEnableVertexAttribArray(position_attribute);
+
+    GLint mvp = glGetUniformLocation(shaderProgram, "MVP");
+    glUniformMatrix4fv(mvp, 1, GL_FALSE, glm::value_ptr(MVP));
+
+    glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 
     while (!glfwWindowShouldClose(window))
     {
         glClear(GL_COLOR_BUFFER_BIT);
 
         glBindVertexArray(vao);
-        glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
+        glDrawElements(GL_TRIANGLES, 36, GL_UNSIGNED_INT, 0);
 
         glfwSwapBuffers(window);
         glfwPollEvents();

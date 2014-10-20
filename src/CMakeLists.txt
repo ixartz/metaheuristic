@@ -23,14 +23,16 @@ find_package(OpenGL REQUIRED)
 find_package(GLEW REQUIRED)
 find_package(PkgConfig REQUIRED)
 pkg_search_module(GLFW REQUIRED glfw3)
+find_package(GLM REQUIRED)
 
 include_directories(${OPENGL_INCLUDE_DIRS})
 include_directories(${GLEW_INCLUDE_DIRS})
 include_directories(${GLFW_INCLUDE_DIRS})
+include_directories(${GLM_INCLUDE_DIRS})
 
 link_directories(${GLFW_LIBRARY_DIRS})
 
 add_executable(metaheuristic main.cpp ${source_io})
 
 target_link_libraries(metaheuristic ${OPENGL_LIBRARIES}
-                      ${GLEW_LIBRARIES} ${GLFW_LIBRARIES})
+                      ${GLEW_LIBRARIES} ${GLFW_LIBRARIES} ${GLM_LIBRARIES})
