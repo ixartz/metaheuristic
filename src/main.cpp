@@ -144,6 +144,18 @@ int main()
         1, 5, 6, 6, 2, 1
     };
 
+    GLfloat normals[24] =
+    {
+        -1.0f, -1.0f, 1.0f,
+        1.0f, -1.0f, 1.0f,
+        1.0f, 1.0f, 1.0f,
+        -1.0f, 1.0f, 1.0f,
+        -1.0f, -1.0f, -1.0f,
+        1.0f, -1.0f, -1.0f,
+        1.0f, 1.0f, -1.0f,
+        -1.0f, 1.0f, -1.0f
+    };
+
     GLfloat colors[24] =
     {
         0.0, 1.0, 1.0,
@@ -161,12 +173,13 @@ int main()
 
     // Allocate space and upload the data from CPU to GPU
     glBindBuffer(GL_ARRAY_BUFFER, vbo);
-    glBufferData(GL_ARRAY_BUFFER, sizeof(vertices_position) + sizeof(colors), NULL, GL_STATIC_DRAW);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(vertices_position) + sizeof(colors) + sizeof(normals), NULL, GL_STATIC_DRAW);
 
     // Transfer the vertex positions:
     glBufferSubData(GL_ARRAY_BUFFER, 0, sizeof(vertices_position), vertices_position);
     // Transfer the vertex colors:
     glBufferSubData(GL_ARRAY_BUFFER, sizeof(vertices_position), sizeof(colors), colors);
+    glBufferSubData(GL_ARRAY_BUFFER, sizeof(vertices_position) + sizeof(colors), sizeof(normals), normals);
 
     GLuint eab;
     glGenBuffers(1, &eab);
@@ -187,6 +200,10 @@ int main()
     glVertexAttribPointer(color_attribute, 3, GL_FLOAT, GL_FALSE, 0, (GLvoid *) sizeof(vertices_position));
     glEnableVertexAttribArray(color_attribute);
 
+    GLint normal_attribute = glGetAttribLocation(shaderProgram, "normal");
+    glVertexAttribPointer(normal_attribute, 3, GL_FLOAT, GL_FALSE, 0, (GLvoid *) (sizeof(vertices_position) + sizeof(colors)));
+    glEnableVertexAttribArray(normal_attribute);
+
     GLint mvp = glGetUniformLocation(shaderProgram, "MVP");
 
     // LINE
@@ -198,7 +215,7 @@ int main()
     GLfloat lines_vertices_position[6] =
     {
         0.0f, 0.0f, 0.0f,
-        8.0f, 0.0f, 0.0f,
+        9.0f, 9.0f, 0.0f,
     };
 
     GLfloat lines_colors[6] =
@@ -207,17 +224,24 @@ int main()
         0.0, 1.0, 1.0,
     };
 
+    GLfloat lines_normal[6] =
+    {
+        0.0f, 0.0f, 0.0f,
+        9.0f, 9.0f, 0.0f,
+    };
+
     GLuint line_vbo;
     glGenBuffers(1, &line_vbo);
 
     // Allocate space and upload the data from CPU to GPU
     glBindBuffer(GL_ARRAY_BUFFER, line_vbo);
-    glBufferData(GL_ARRAY_BUFFER, sizeof(lines_vertices_position) + sizeof(lines_colors), NULL, GL_STATIC_DRAW);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(lines_vertices_position) + sizeof(lines_colors) + sizeof(lines_normal), NULL, GL_STATIC_DRAW);
 
     // Transfer the vertex positions:
     glBufferSubData(GL_ARRAY_BUFFER, 0, sizeof(lines_vertices_position), lines_vertices_position);
     // Transfer the vertex colors:
     glBufferSubData(GL_ARRAY_BUFFER, sizeof(lines_vertices_position), sizeof(lines_colors), lines_colors);
+    glBufferSubData(GL_ARRAY_BUFFER, sizeof(lines_vertices_position) + sizeof(lines_colors), sizeof(lines_normal), lines_normal);
 
     // Get the location of the attributes that enters in the vertex shader
     GLint line_position_attribute = glGetAttribLocation(shaderProgram, "position");
@@ -229,6 +253,10 @@ int main()
     GLint line_color_attribute = glGetAttribLocation(shaderProgram, "color");
     glVertexAttribPointer(line_color_attribute, 3, GL_FLOAT, GL_FALSE, 0, (GLvoid *) sizeof(lines_vertices_position));
     glEnableVertexAttribArray(line_color_attribute);
+
+    GLint line_normal_attribute = glGetAttribLocation(shaderProgram, "normal");
+    glVertexAttribPointer(line_normal_attribute, 3, GL_FLOAT, GL_FALSE, 0, (GLvoid *) (sizeof(lines_vertices_position) + sizeof(line_color_attribute)));
+    glEnableVertexAttribArray(line_normal_attribute);
 
     GLint line_mvp = glGetUniformLocation(shaderProgram, "MVP");
 
@@ -271,7 +299,7 @@ int main()
                                          glm::vec3(0, 1, 0)  // Head is up (set to 0,-1,0 to look upside-down)
                                          );
 
-            glm::mat4 Model = glm::translate(glm::mat4(1.0f), glm::vec3(i * 10, 0, +10.0f));
+            glm::mat4 Model = glm::translate(glm::mat4(1.0f), glm::vec3(i * 10, i * 10, +5.0f));
 
             glm::mat4 MVP = Projection * View * Model;
 
