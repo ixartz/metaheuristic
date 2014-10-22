@@ -87,6 +87,7 @@ int main()
     glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
     glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
     glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 2);
+    glfwWindowHint(GLFW_SAMPLES, 4);
 
     window = glfwCreateWindow(500, 500, "Metaheuristic", NULL, NULL);
 
@@ -143,25 +144,29 @@ int main()
         1, 5, 6, 6, 2, 1
     };
 
-    glm::mat4 Projection;
-    // Set the projection matrix
-    Projection = glm::perspective(90.f, 500.f / 500.f, 0.1f, 1000.f);
-
-    glm::mat4 View = glm::lookAt(glm::vec3(0, 0, -2.5f), // Camera is at (4,3,3), in World Space
-                                 glm::vec3(0, 0, 0), // and looks at the origin
-                                 glm::vec3(0, 1, 0)  // Head is up (set to 0,-1,0 to look upside-down)
-                                 );
-
-    glm::mat4 Model = glm::mat4(1.0f);
-
-    glm::mat4 MVP = Projection * View * Model;
+    GLfloat colors[24] =
+    {
+        0.0, 1.0, 1.0,
+        0.0, 1.0, 1.0,
+        0.0, 0.4, 0.4,
+        0.0, 0.4, 0.4,
+        0.0, 1.0, 1.0,
+        0.0, 1.0, 1.0,
+        0.0, 0.4, 0.4,
+        0.0, 0.4, 0.4
+    };
 
     GLuint vbo;
     glGenBuffers(1, &vbo);
 
     // Allocate space and upload the data from CPU to GPU
     glBindBuffer(GL_ARRAY_BUFFER, vbo);
-    glBufferData(GL_ARRAY_BUFFER, sizeof(vertices_position), vertices_position, GL_STATIC_DRAW);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(vertices_position) + sizeof(colors), NULL, GL_STATIC_DRAW);
+
+    // Transfer the vertex positions:
+    glBufferSubData(GL_ARRAY_BUFFER, 0, sizeof(vertices_position), vertices_position);
+    // Transfer the vertex colors:
+    glBufferSubData(GL_ARRAY_BUFFER, sizeof(vertices_position), sizeof(colors), colors);
 
     GLuint eab;
     glGenBuffers(1, &eab);
@@ -178,17 +183,102 @@ int main()
     // Enable the attribute
     glEnableVertexAttribArray(position_attribute);
 
-    GLint mvp = glGetUniformLocation(shaderProgram, "MVP");
-    glUniformMatrix4fv(mvp, 1, GL_FALSE, glm::value_ptr(MVP));
+    GLint color_attribute = glGetAttribLocation(shaderProgram, "color");
+    glVertexAttribPointer(color_attribute, 3, GL_FLOAT, GL_FALSE, 0, (GLvoid *) sizeof(vertices_position));
+    glEnableVertexAttribArray(color_attribute);
 
-    glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+    GLint mvp = glGetUniformLocation(shaderProgram, "MVP");
+
+    // LINE
+    GLuint line_vao;
+
+    glGenVertexArrays(1, &line_vao);
+    glBindVertexArray(line_vao);
+
+    GLfloat lines_vertices_position[6] =
+    {
+        0.0f, 0.0f, 0.0f,
+        8.0f, 0.0f, 0.0f,
+    };
+
+    GLfloat lines_colors[6] =
+    {
+        0.0, 1.0, 1.0,
+        0.0, 1.0, 1.0,
+    };
+
+    GLuint line_vbo;
+    glGenBuffers(1, &line_vbo);
+
+    // Allocate space and upload the data from CPU to GPU
+    glBindBuffer(GL_ARRAY_BUFFER, line_vbo);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(lines_vertices_position) + sizeof(lines_colors), NULL, GL_STATIC_DRAW);
+
+    // Transfer the vertex positions:
+    glBufferSubData(GL_ARRAY_BUFFER, 0, sizeof(lines_vertices_position), lines_vertices_position);
+    // Transfer the vertex colors:
+    glBufferSubData(GL_ARRAY_BUFFER, sizeof(lines_vertices_position), sizeof(lines_colors), lines_colors);
+
+    // Get the location of the attributes that enters in the vertex shader
+    GLint line_position_attribute = glGetAttribLocation(shaderProgram, "position");
+    // Specify how the data for position can be accessed
+    glVertexAttribPointer(line_position_attribute, 3, GL_FLOAT, GL_FALSE, 0, 0);
+    // Enable the attribute
+    glEnableVertexAttribArray(line_position_attribute);
+
+    GLint line_color_attribute = glGetAttribLocation(shaderProgram, "color");
+    glVertexAttribPointer(line_color_attribute, 3, GL_FLOAT, GL_FALSE, 0, (GLvoid *) sizeof(lines_vertices_position));
+    glEnableVertexAttribArray(line_color_attribute);
+
+    GLint line_mvp = glGetUniformLocation(shaderProgram, "MVP");
+
+    //glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 
     while (!glfwWindowShouldClose(window))
     {
-        glClear(GL_COLOR_BUFFER_BIT);
+        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+        glEnable(GL_DEPTH_TEST);
+        glDepthFunc(GL_LEQUAL);
+
+        glBindVertexArray(line_vao);
+        glm::mat4 Projection;
+        // Set the projection matrix
+        // glm::ortho(-10.0f, 10.0f, 10.0f, -10.0f, 0.1f, 100.f)
+        Projection = glm::perspective(30.f, 500.f / 500.f, 0.1f, 1000.f);
+
+        glm::mat4 View = glm::lookAt(glm::vec3(0, 0, -40.0f), // Camera is at (4,3,3), in World Space
+                                     glm::vec3(0, 0, 0), // and looks at the origin
+                                     glm::vec3(0, 1, 0)  // Head is up (set to 0,-1,0 to look upside-down)
+                                     );
+
+        glm::mat4 Model = glm::mat4(1.0f);
+
+        glm::mat4 MVP = Projection * View * Model;
+        glUniformMatrix4fv(line_mvp, 1, GL_FALSE, glm::value_ptr(MVP));
+        glDrawArrays(GL_LINES, 0, 2);
 
         glBindVertexArray(vao);
-        glDrawElements(GL_TRIANGLES, 36, GL_UNSIGNED_INT, 0);
+        for (int i = 0; i < 2; ++i)
+        {
+            glm::mat4 Projection;
+            // Set the projection matrix
+            // glm::ortho(-10.0f, 10.0f, 10.0f, -10.0f, 0.1f, 100.f)
+            Projection = glm::perspective(30.f, 500.f / 500.f, 0.1f, 1000.f);
+
+            glm::mat4 View = glm::lookAt(glm::vec3(0, 0, -40.0f), // Camera is at (4,3,3), in World Space
+                                         glm::vec3(0, 0, 0), // and looks at the origin
+                                         glm::vec3(0, 1, 0)  // Head is up (set to 0,-1,0 to look upside-down)
+                                         );
+
+            glm::mat4 Model = glm::translate(glm::mat4(1.0f), glm::vec3(i * 10, 0, +10.0f));
+
+            glm::mat4 MVP = Projection * View * Model;
+
+            glUniformMatrix4fv(mvp, 1, GL_FALSE, glm::value_ptr(MVP));
+
+            glDrawElements(GL_TRIANGLES, 36, GL_UNSIGNED_INT, 0);
+        }
 
         glfwSwapBuffers(window);
         glfwPollEvents();
