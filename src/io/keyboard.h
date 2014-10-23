@@ -14,6 +14,9 @@
 class Keyboard
 {
 public:
+    /**
+     * \brief Called when a key is pressed, repeated or released.
+     */
     static void key_callback(GLFWwindow* window,
                              int key,
                              int scancode,
