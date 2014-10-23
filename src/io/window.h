@@ -11,13 +11,11 @@
 
 #include <GL/glew.h>
 #include <GLFW/glfw3.h>
-#include <glm/glm.hpp>
-#include <glm/gtc/matrix_transform.hpp>
 #include <iostream>
 #include <fstream>
 #include <vector>
 #include "../model/shader-loader.h"
-#include "../model/cube.h"
+#include "../positioning/display.h"
 #include "keyboard.h"
 #include "Config.h"
 

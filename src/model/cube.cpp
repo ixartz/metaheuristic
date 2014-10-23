@@ -9,66 +9,53 @@
 #include "cube.h"
 
 Cube::Cube(GLuint shader_program)
-    : shader_program_(shader_program)
+    : Model(shader_program, 24, 36)
 {
-    glGenVertexArrays(1, &vao_);
-    glBindVertexArray(vao_);
+    vertice_pos_ = new GLfloat[vert_size_]
+    {
+        -1.0f, -1.0f, 1.0f,
+        1.0f, -1.0f, 1.0f,
+        1.0f, 1.0f, 1.0f,
+        -1.0f, 1.0f, 1.0f,
+        -1.0f, -1.0f, -1.0f,
+        1.0f, -1.0f, -1.0f,
+        1.0f, 1.0f, -1.0f,
+        -1.0f, 1.0f, -1.0f
+    };
 
-    glGenBuffers(1, &vbo_);
+    color_ = new GLfloat[vert_size_]
+    {
+        0.0, 1.0, 1.0,
+        0.0, 1.0, 1.0,
+        0.0, 0.4, 0.4,
+        0.0, 0.4, 0.4,
+        0.0, 1.0, 1.0,
+        0.0, 1.0, 1.0,
+        0.0, 0.4, 0.4,
+        0.0, 0.4, 0.4
+    };
 
-    // Allocate space and upload the data from CPU to GPU
-    glBindBuffer(GL_ARRAY_BUFFER, vbo_);
-    glBufferData(GL_ARRAY_BUFFER,
-                 sizeof(vertice_pos_) + sizeof(color_) + sizeof(normal_),
-                 NULL,
-                 GL_STATIC_DRAW);
+    normal_ = new GLfloat[vert_size_]
+    {
+        -1.0f, -1.0f, 1.0f,
+        1.0f, -1.0f, 1.0f,
+        1.0f, 1.0f, 1.0f,
+        -1.0f, 1.0f, 1.0f,
+        -1.0f, -1.0f, -1.0f,
+        1.0f, -1.0f, -1.0f,
+        1.0f, 1.0f, -1.0f,
+        -1.0f, 1.0f, -1.0f
+    };
 
-    // Transfer the vertex positions, colors and normals
-    glBufferSubData(GL_ARRAY_BUFFER,
-                    0,
-                    sizeof(vertice_pos_),
-                    vertice_pos_);
+    indice_ = new GLuint[ind_size_]
+    {
+        0, 1, 2, 2, 3, 0,
+        3, 2, 6, 6, 7, 3,
+        7, 6, 5, 5, 4, 7,
+        4, 0, 3, 3, 7, 4,
+        0, 1, 5, 5, 4, 0,
+        1, 5, 6, 6, 2, 1
+    };
 
-    glBufferSubData(GL_ARRAY_BUFFER,
-                    sizeof(vertice_pos_),
-                    sizeof(color_),
-                    color_);
-
-    glBufferSubData(GL_ARRAY_BUFFER,
-                    sizeof(vertice_pos_) + sizeof(color_),
-                    sizeof(normal_),
-                    normal_);
-
-    glGenBuffers(1, &eab_);
-
-    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, eab_);
-    glBufferData(GL_ELEMENT_ARRAY_BUFFER,
-                 sizeof(indice_),
-                 indice_,
-                 GL_STATIC_DRAW);
-
-    // Enable position attribute
-    GLint position_att = glGetAttribLocation(shader_program_,
-                                             "position");
-    glVertexAttribPointer(position_att, 3, GL_FLOAT, GL_FALSE, 0, 0);
-    glEnableVertexAttribArray(position_att);
-
-    GLint color_att = glGetAttribLocation(shader_program_, "color");
-    glVertexAttribPointer(color_att, 3, GL_FLOAT, GL_FALSE, 0,
-                          (GLvoid *) sizeof(vertice_pos_));
-    glEnableVertexAttribArray(color_att);
-
-    GLint normal_att = glGetAttribLocation(shader_program_, "normal");
-    glVertexAttribPointer(normal_att, 3, GL_FLOAT, GL_FALSE, 0,
-                          (GLvoid *) (sizeof(vertice_pos_) + sizeof(color_)));
-    glEnableVertexAttribArray(normal_att);
-
-    mvp_uniform_ = glGetUniformLocation(shader_program_, "MVP");
-}
-
-void Cube::render(glm::mat4& mvp)
-{
-    glBindVertexArray(vao_);
-    glUniformMatrix4fv(mvp_uniform_, 1, GL_FALSE, glm::value_ptr(mvp));
-    glDrawElements(GL_TRIANGLES, 36, GL_UNSIGNED_INT, 0);
+    init_();
 }

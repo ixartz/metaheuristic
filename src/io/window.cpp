@@ -97,10 +97,8 @@ void Window::execute()
                                  glm::vec3(0, 1, 0));
 
     glm::mat4 vp = projection * view;
-    glm::mat4 mvp;
 
-    glm::mat4 model;
-    Cube c(shader_program_);
+    Display d(shader_program_);
 
     while (!glfwWindowShouldClose(window_))
     {
@@ -109,9 +107,7 @@ void Window::execute()
         glEnable(GL_DEPTH_TEST);
         glDepthFunc(GL_LEQUAL);
 
-        model = glm::translate(glm::mat4(1.0f), glm::vec3(0, 0, 5.0f));
-        mvp = vp * model;
-        c.render(mvp);
+        d.render(vp);
 
         glfwSwapBuffers(window_);
         glfwPollEvents();
