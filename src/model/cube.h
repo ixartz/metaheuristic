@@ -19,6 +19,13 @@ class Cube : public Model
 public:
     /// Constructor.
     Cube(GLuint shader_program);
+    /// Destructor.
+    virtual ~Cube();
+
+    /**
+     * \brief Render the model.
+     */
+    virtual void render(glm::mat4& mvp);
 };
 
 #endif /* defined(__metaheuristic__cube__) */

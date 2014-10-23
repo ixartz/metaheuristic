@@ -59,3 +59,17 @@ Cube::Cube(GLuint shader_program)
 
     init_();
 }
+
+Cube::~Cube()
+{
+    delete [] vertice_pos_;
+    delete [] color_;
+    delete [] normal_;
+    delete [] indice_;
+}
+
+void Cube::render(glm::mat4& mvp)
+{
+    Model::render(mvp);
+    glDrawElements(GL_TRIANGLES, 36, GL_UNSIGNED_INT, 0);
+}

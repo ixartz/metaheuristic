@@ -47,13 +47,16 @@ void Model::init_()
                     vert_size_ * sizeof(GLfloat),
                     normal_);
 
-    glGenBuffers(1, &eab_);
+    if (ind_size_ > 0)
+    {
+        glGenBuffers(1, &eab_);
 
-    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, eab_);
-    glBufferData(GL_ELEMENT_ARRAY_BUFFER,
-                 ind_size_ * sizeof(GLuint),
-                 indice_,
-                 GL_STATIC_DRAW);
+        glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, eab_);
+        glBufferData(GL_ELEMENT_ARRAY_BUFFER,
+                     ind_size_ * sizeof(GLuint),
+                     indice_,
+                     GL_STATIC_DRAW);
+    }
 
     // Enable position attribute
     GLint position_att = glGetAttribLocation(shader_program_,
@@ -78,5 +81,4 @@ void Model::render(glm::mat4& mvp)
 {
     glBindVertexArray(vao_);
     glUniformMatrix4fv(mvp_uniform_, 1, GL_FALSE, glm::value_ptr(mvp));
-    glDrawElements(GL_TRIANGLES, 36, GL_UNSIGNED_INT, 0);
 }

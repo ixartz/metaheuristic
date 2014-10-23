@@ -9,7 +9,8 @@
 #include "display.h"
 
 Display::Display(GLuint shader_program)
-    : c_(shader_program)
+    : shader_program_(shader_program)
+    , c_(shader_program)
 {
 
 }
@@ -17,6 +18,7 @@ Display::Display(GLuint shader_program)
 void Display::render(glm::mat4& mv)
 {
     glm::mat4 mvp;
+    Line l(shader_program_);
 
     for (int j = 0; j < 6; ++j)
     {
@@ -31,4 +33,8 @@ void Display::render(glm::mat4& mv)
             c_.render(mvp);
         }
     }
+
+    mvp = glm::mat4(1.0f);
+    mvp = mv * mvp;
+    l.render(mvp);
 }

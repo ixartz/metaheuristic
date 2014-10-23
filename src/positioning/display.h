@@ -13,6 +13,7 @@
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 #include "../model/cube.h"
+#include "../model/line.h"
 
 class Display
 {
@@ -26,6 +27,8 @@ public:
     void render(glm::mat4& mv);
 
 private:
+    GLuint shader_program_;
+
     Cube c_;
 };
 
