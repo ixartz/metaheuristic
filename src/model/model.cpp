@@ -15,7 +15,7 @@ Model::Model(GLuint shader_program)
 
 }
 
-void Model::init_()
+void Model::init_(float ambient_light[4])
 {
     glGenVertexArrays(1, &vao_);
     glBindVertexArray(vao_);
@@ -74,6 +74,9 @@ void Model::init_()
     glEnableVertexAttribArray(normal_att);
 
     mvp_uniform_ = glGetUniformLocation(shader_program_, "MVP");
+
+    GLint ambien_unif = glGetUniformLocation(shader_program_, "ambient_light");
+    glProgramUniform4fv(shader_program_, ambien_unif, 1, ambient_light);
 }
 
 void Model::render(glm::mat4& mvp)

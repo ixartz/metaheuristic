@@ -21,6 +21,12 @@ public:
      * \brief Render the model.
      */
     virtual void render(glm::mat4& mvp);
+
+private:
+    /**
+     * \brief Create link between two nodes.
+     */
+    void create_link_(int src, int dst, std::vector<int>& loc);
 };
 
 #endif /* defined(__metaheuristic__line__) */

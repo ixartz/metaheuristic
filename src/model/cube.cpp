@@ -57,7 +57,8 @@ Cube::Cube(GLuint shader_program)
         1, 5, 6, 6, 2, 1
     };
 
-    init_();
+    float ambient_light[4] = { 0.3, 0.3, 0.3, 1.0 };
+    init_(ambient_light);
 }
 
 void Cube::render(glm::mat4& mvp)

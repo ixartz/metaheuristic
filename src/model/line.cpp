@@ -11,29 +11,51 @@
 Line::Line(GLuint shader_program, std::vector<int>& loc)
     : Model(shader_program)
 {
-    vertice_pos_ =
+    for (unsigned i = 0; i < loc.size(); ++i)
     {
-        loc[0] / 5 * -4.5f + 9.0f, loc[0] % 5 * -4.5f + 9.0f, 0.0f,
-        loc[1] / 5 * -4.5f + 9.0f, loc[1] % 5 * -4.5f + 9.0f, 0.0f,
-    };
+        if (i % 5 < 4)
+        {
+            create_link_(i, i + 1, loc);
+        }
 
-    color_ =
-    {
-        0.0, 1.0, 0.0,
-        0.0, 1.0, 0.0,
-    };
+        if (i / 5 < 4)
+        {
+            create_link_(i, i + 5, loc);
+        }
+    }
 
-    normal_ =
-    {
-        0.0f, 0.0f, 0.0f,
-        0.0f, 0.0f, 0.0f,
-    };
-
-    init_();
+    float ambient_light[4] = { 1.0, 1.0, 1.0, 1.0 };
+    init_(ambient_light);
 }
 
 void Line::render(glm::mat4& mvp)
 {
     Model::render(mvp);
-    glDrawArrays(GL_LINES, 0, 2);
+    glDrawArrays(GL_LINES, 0, vertice_pos_.size());
+}
+
+void Line::create_link_(int src, int dst, std::vector<int>& loc)
+{
+    vertice_pos_.push_back(loc[src] / 5 * -4.5f + 9.0f);
+    vertice_pos_.push_back(loc[src] % 5 * -4.5f + 9.0f);
+    vertice_pos_.push_back(0.0f);
+
+    vertice_pos_.push_back(loc[dst] / 5 * -4.5f + 9.0f);
+    vertice_pos_.push_back(loc[dst] % 5 * -4.5f + 9.0f);
+    vertice_pos_.push_back(0.0f);
+
+    color_.push_back(1.0);
+    color_.push_back(0.0);
+    color_.push_back(0.0);
+
+    color_.push_back(1.0);
+    color_.push_back(0.0);
+    color_.push_back(0.0);
+
+    normal_.push_back(0.0f);
+    normal_.push_back(0.0f);
+    normal_.push_back(0.0f);
+    normal_.push_back(0.0f);
+    normal_.push_back(0.0f);
+    normal_.push_back(0.0f);
 }

@@ -30,7 +30,7 @@ protected:
     /**
      * \brief Initialize elements for the shader.
      */
-    void init_();
+    void init_(float ambient_light[4]);
 
 protected:
     GLuint shader_program_;
