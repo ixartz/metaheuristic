@@ -12,13 +12,14 @@
 #include <GL/glew.h>
 #include <glm/glm.hpp>
 #include <glm/gtc/type_ptr.hpp>
+#include <vector>
 #include "../model/shader-loader.h"
 
 class Model
 {
 public:
     /// Constructor.
-    Model(GLuint shader_program, int vert_size, int ind_size);
+    Model(GLuint shader_program);
 
     /**
      * \brief Render the model.
@@ -40,12 +41,10 @@ protected:
 
     GLint mvp_uniform_;
 
-    long vert_size_;
-    long ind_size_;
-    GLfloat* vertice_pos_;
-    GLfloat* color_;
-    GLfloat* normal_;
-    GLuint* indice_;
+    std::vector<GLfloat> vertice_pos_;
+    std::vector<GLfloat> color_;
+    std::vector<GLfloat> normal_;
+    std::vector<GLuint> indice_;
 };
 
 #endif /* defined(__metaheuristic__model__) */

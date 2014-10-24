@@ -9,10 +9,8 @@
 #include "model.h"
 
 
-Model::Model(GLuint shader_program, int vert_size, int ind_size)
+Model::Model(GLuint shader_program)
     : shader_program_(shader_program)
-    , vert_size_(vert_size)
-    , ind_size_(ind_size)
 {
 
 }
@@ -27,34 +25,34 @@ void Model::init_()
     // Allocate space and upload the data from CPU to GPU
     glBindBuffer(GL_ARRAY_BUFFER, vbo_);
     glBufferData(GL_ARRAY_BUFFER,
-                 3 * vert_size_ * sizeof(GLfloat),
+                 3 * vertice_pos_.size() * sizeof(GLfloat),
                  NULL,
                  GL_STATIC_DRAW);
 
     // Transfer the vertex positions, colors and normals
     glBufferSubData(GL_ARRAY_BUFFER,
                     0,
-                    vert_size_ * sizeof(GLfloat),
-                    vertice_pos_);
+                    vertice_pos_.size() * sizeof(GLfloat),
+                    vertice_pos_.data());
 
     glBufferSubData(GL_ARRAY_BUFFER,
-                    vert_size_ * sizeof(GLfloat),
-                    vert_size_ * sizeof(GLfloat),
-                    color_);
+                    vertice_pos_.size() * sizeof(GLfloat),
+                    vertice_pos_.size() * sizeof(GLfloat),
+                    color_.data());
 
     glBufferSubData(GL_ARRAY_BUFFER,
-                    2 * vert_size_ * sizeof(GLfloat),
-                    vert_size_ * sizeof(GLfloat),
-                    normal_);
+                    2 * vertice_pos_.size() * sizeof(GLfloat),
+                    vertice_pos_.size() * sizeof(GLfloat),
+                    normal_.data());
 
-    if (ind_size_ > 0)
+    if (vertice_pos_.size() > 0)
     {
         glGenBuffers(1, &eab_);
 
         glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, eab_);
         glBufferData(GL_ELEMENT_ARRAY_BUFFER,
-                     ind_size_ * sizeof(GLuint),
-                     indice_,
+                     indice_.size() * sizeof(GLuint),
+                     indice_.data(),
                      GL_STATIC_DRAW);
     }
 
@@ -66,12 +64,13 @@ void Model::init_()
 
     GLint color_att = glGetAttribLocation(shader_program_, "color");
     glVertexAttribPointer(color_att, 3, GL_FLOAT, GL_FALSE, 0,
-                          (GLvoid *) (vert_size_ * sizeof(GLfloat)));
+                          (GLvoid *) (vertice_pos_.size() * sizeof(GLfloat)));
     glEnableVertexAttribArray(color_att);
 
     GLint normal_att = glGetAttribLocation(shader_program_, "normal");
     glVertexAttribPointer(normal_att, 3, GL_FLOAT, GL_FALSE, 0,
-                          (GLvoid *) (2 * vert_size_ * sizeof(GLfloat)));
+                          (GLvoid *) (2 * vertice_pos_.size()
+                                      * sizeof(GLfloat)));
     glEnableVertexAttribArray(normal_att);
 
     mvp_uniform_ = glGetUniformLocation(shader_program_, "MVP");

@@ -9,9 +9,9 @@
 #include "cube.h"
 
 Cube::Cube(GLuint shader_program)
-    : Model(shader_program, 24, 36)
+    : Model(shader_program)
 {
-    vertice_pos_ = new GLfloat[vert_size_]
+    vertice_pos_ =
     {
         -1.0f, -1.0f, 1.0f,
         1.0f, -1.0f, 1.0f,
@@ -23,7 +23,7 @@ Cube::Cube(GLuint shader_program)
         -1.0f, 1.0f, -1.0f
     };
 
-    color_ = new GLfloat[vert_size_]
+    color_ =
     {
         0.0, 1.0, 1.0,
         0.0, 1.0, 1.0,
@@ -35,7 +35,7 @@ Cube::Cube(GLuint shader_program)
         0.0, 0.4, 0.4
     };
 
-    normal_ = new GLfloat[vert_size_]
+    normal_ =
     {
         -1.0f, -1.0f, 1.0f,
         1.0f, -1.0f, 1.0f,
@@ -47,7 +47,7 @@ Cube::Cube(GLuint shader_program)
         -1.0f, 1.0f, -1.0f
     };
 
-    indice_ = new GLuint[ind_size_]
+    indice_ =
     {
         0, 1, 2, 2, 3, 0,
         3, 2, 6, 6, 7, 3,
@@ -58,14 +58,6 @@ Cube::Cube(GLuint shader_program)
     };
 
     init_();
-}
-
-Cube::~Cube()
-{
-    delete [] vertice_pos_;
-    delete [] color_;
-    delete [] normal_;
-    delete [] indice_;
 }
 
 void Cube::render(glm::mat4& mvp)

@@ -19,8 +19,6 @@ class Cube : public Model
 public:
     /// Constructor.
     Cube(GLuint shader_program);
-    /// Destructor.
-    virtual ~Cube();
 
     /**
      * \brief Render the model.
