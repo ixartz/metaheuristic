@@ -11,14 +11,18 @@
 Display::Display(GLuint shader_program)
     : shader_program_(shader_program)
     , c_(shader_program)
+    , loc_(25, 0)
 {
-
+    for (int i = 0; i < 25; ++i)
+    {
+        loc_[i] = i;
+    }
 }
 
 void Display::render(glm::mat4& mv)
 {
     glm::mat4 mvp;
-    Line l(shader_program_);
+    Line l(shader_program_, loc_);
 
     for (int j = 0; j < 6; ++j)
     {

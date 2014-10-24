@@ -8,13 +8,13 @@
 
 #include "line.h"
 
-Line::Line(GLuint shader_program)
+Line::Line(GLuint shader_program, std::vector<int>& loc)
     : Model(shader_program, 6, 0)
 {
     vertice_pos_ = new GLfloat[vert_size_]
     {
-        0.0f, 0.0f, 0.0f,
-        -9.0f, -9.0f, 0.0f,
+        loc[0] / 5 * -4.5f + 9.0f, loc[0] % 5 * -4.5f + 9.0f, 0.0f,
+        loc[1] / 5 * -4.5f + 9.0f, loc[1] % 5 * -4.5f + 9.0f, 0.0f,
     };
 
     color_ = new GLfloat[vert_size_]

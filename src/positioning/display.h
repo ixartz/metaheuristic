@@ -28,8 +28,9 @@ public:
 
 private:
     GLuint shader_program_;
-
     Cube c_;
+
+    std::vector<int> loc_;
 };
 
 #endif /* defined(__metaheuristic__display__) */

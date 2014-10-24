@@ -15,7 +15,7 @@ class Line : public Model
 {
 public:
     /// Constructor.
-    Line(GLuint shader_program);
+    Line(GLuint shader_program, std::vector<int>& loc);
     /// Destructor.
     virtual ~Line();
 
