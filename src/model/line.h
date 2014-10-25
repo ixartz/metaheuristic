@@ -11,11 +11,13 @@
 
 #include "model.h"
 
+class Display;
+
 class Line : public Model
 {
 public:
     /// Constructor.
-    Line(GLuint shader_program, std::vector<int>& loc);
+    Line(GLuint shader_program, Display* d);
 
     /**
      * \brief Render the model.
@@ -26,7 +28,7 @@ private:
     /**
      * \brief Create link between two nodes.
      */
-    void create_link_(int src, int dst, std::vector<int>& loc);
+    void create_link_(int src, int dst, Display* d);
 };
 
 #endif /* defined(__metaheuristic__line__) */
