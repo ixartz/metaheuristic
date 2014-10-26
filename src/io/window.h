@@ -16,6 +16,7 @@
 #include <vector>
 #include "../model/shader-loader.h"
 #include "../positioning/display.h"
+#include "../positioning/tabu.h"
 #include "keyboard.h"
 #include "Config.h"
 

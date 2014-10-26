@@ -12,6 +12,8 @@
 #include <GL/glew.h>
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
+#include <cmath>
+#include <random>
 #include "../model/cube.h"
 #include "../model/line.h"
 
@@ -43,6 +45,9 @@ public:
 
     /// Return the loc vector
     std::vector<int>& get_loc();
+
+    /// Set the loc vector
+    void set_loc(std::vector<int>& loc);
 
 private:
     /**

@@ -99,6 +99,7 @@ void Window::execute()
     glm::mat4 vp = projection * view;
 
     Display d(shader_program_);
+    Tabu t(d);
 
     while (!glfwWindowShouldClose(window_))
     {
@@ -108,6 +109,7 @@ void Window::execute()
         glDepthFunc(GL_LEQUAL);
 
         d.render(vp);
+        t.search();
 
         glfwSwapBuffers(window_);
         glfwPollEvents();

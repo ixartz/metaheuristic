@@ -19,13 +19,13 @@ Display::Display(GLuint shader_program)
     }
 
     // Random shuffle
-    /*
-    srand(time(NULL));
+    std::mt19937 eng(time(NULL));
+    std::uniform_int_distribution<uint32_t> uint_dist;
+
     for (int i = 24; i > 0; --i)
     {
-        std::swap(loc_[i], loc_[rand() % (i + 1)]);
+        std::swap(loc_[i], loc_[uint_dist(eng) % (i + 1)]);
     }
-    */
 }
 
 void Display::render(glm::mat4& mv)
@@ -87,8 +87,13 @@ std::vector<int>& Display::get_loc()
     return loc_;
 }
 
+void Display::set_loc(std::vector<int>& loc)
+{
+    loc_ = loc;
+}
+
 float Display::dist_(int i, int j)
 {
-    return sqrt(pow(compute_x(j) - compute_x(i), 2) +
-                pow(compute_y(j) - compute_y(i), 2));
+    return std::abs(compute_x(j) - compute_x(i)) +
+           std::abs(compute_y(j) - compute_y(i));
 }
