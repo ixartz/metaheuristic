@@ -100,6 +100,7 @@ void Window::execute()
 
     Display d(shader_program_);
     Tabu t(d);
+    float min = std::numeric_limits<float>::max();
 
     while (!glfwWindowShouldClose(window_))
     {
@@ -109,7 +110,9 @@ void Window::execute()
         glDepthFunc(GL_LEQUAL);
 
         d.render(vp);
-        t.search();
+
+        if (min > 200)
+            min = t.search();
 
         glfwSwapBuffers(window_);
         glfwPollEvents();

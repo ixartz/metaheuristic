@@ -24,7 +24,7 @@ public:
     /**
      * \brief Tabu search algorithm.
      */
-    void search();
+    float search();
 
 private:
     /**

@@ -17,7 +17,7 @@ Tabu::Tabu(Display& d)
 
 }
 
-void Tabu::search()
+float Tabu::search()
 {
     std::vector<int>& loc = d_.get_loc();
     float min = std::numeric_limits<float>::max();
@@ -63,6 +63,8 @@ void Tabu::search()
         list_[pos_] = std::make_pair(best1, best2);
         next_pos_();
     }
+
+    return min;
 }
 
 void Tabu::next_pos_()
